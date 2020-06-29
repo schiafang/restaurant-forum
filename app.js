@@ -11,4 +11,3 @@ app.listen(PORT, () => {
 })
 
 require('./routes/index')(app)
-

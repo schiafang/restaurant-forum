@@ -5,6 +5,15 @@ const User = db.User
 const userController = {
   signUpPage: (req, res) => res.render('signup'),
   signInPage: (req, res) => res.render('signin'),
+  singIn: (req, res) => {
+    req.flash('successMsg', '成功登入！')
+    res.redirect('/restaurants')
+  },
+  logout: (req, res) => {
+    req.flash('successMsg', '登出成功！')
+    req.logout()
+    res.redirect('/signin')
+  },
   signUp: (req, res) => {
     const { name, email, password, confirmPassword } = req.body
     const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10))

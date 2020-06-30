@@ -1,3 +1,6 @@
+const db = require('../models')
+const Restaurant = db.Restaurant
+
 const adminController = {
   getRestaurants: (req, res) => {
     return res.render('admin/restaurants')

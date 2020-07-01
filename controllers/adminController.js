@@ -1,5 +1,6 @@
 const db = require('../models')
 const Restaurant = db.Restaurant
+const fs = require('fs')
 
 const adminController = {
   //瀏覽全部餐廳
@@ -22,15 +23,24 @@ const adminController = {
   //新增餐廳資料
   postRestaurant: (req, res) => {
     const { name, tel, address, opening_hours, description } = req.body
+    const { file } = req
+
     if (!req.body.name) {
       req.flash('errorMsg', "name didn't exist")
       return res.redirect('back')
     }
-    return Restaurant.create({ name, tel, address, opening_hours, description })
-      .then(restaurant => {
-        req.flash('successMsg', 'restaurant was successfully created')
-        res.redirect('/admin/restaurants')
+    if (file) {
+      fs.readFile(file.path, (err, data) => {
+        if (err) console.log('Error: ', err)
+        fs.writeFile(`upload/${file.originalname}`, data, () => {
+          return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
+            .then(() => res.redirect('/admin/restaurants'))
+        })
       })
+    } else {
+      return Restaurant.create({ name, tel, address, opening_hours, description })
+        .then(() => res.redirect('/admin/restaurants'))
+    }
   },
   //瀏覽編輯餐廳頁面
   editRestaurant: (req, res) => {
@@ -42,10 +52,28 @@ const adminController = {
   putRestaurant: (req, res) => {
     const id = req.params.id
     const { name, tel, address, opening_hours, description } = req.body
-    return Restaurant.findByPk(id)
-      .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description }))
-      .then(() => res.redirect('/admin/restaurants'))
-      .catch(error => console.log('error'))
+    const { file } = req
+    if (!req.body.name) {
+      req.flash('errorMsg', "name didn't exist")
+      return res.redirect('back')
+    }
+    if (file) {
+      fs.readFile(file.path, (err, data) => {
+        if (err) console.log('Error: ', err)
+        fs.writeFile(`upload/${file.originalname}`, data, () => {
+          return Restaurant.findByPk(id)
+            .then(restaurant => {
+              return restaurant.update({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
+            })
+            .then(() => res.redirect('/admin/restaurants'))
+        })
+      })
+    } else {
+      return Restaurant.findByPk(id)
+        .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description }))
+        .then(() => res.redirect('/admin/restaurants'))
+        .catch(error => console.log('error'))
+    }
   },
   //刪除餐廳資料
   deleteRestaurant: (req, res) => {

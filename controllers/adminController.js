@@ -46,6 +46,14 @@ const adminController = {
       .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description }))
       .then(() => res.redirect('/admin/restaurants'))
       .catch(error => console.log('error'))
+  },
+  //刪除餐廳資料
+  deleteRestaurant: (req, res) => {
+    const id = req.params.id
+    return Restaurant.findByPk(id)
+      .then(restaurant => restaurant.destroy())
+      .then(() => res.redirect('/admin/restaurants'))
+      .catch(error => console.log('error'))
   }
 }
 

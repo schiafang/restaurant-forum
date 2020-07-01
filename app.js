@@ -5,6 +5,7 @@ const session = require('express-session')
 const flash = require('connect-flash')
 const db = require('./models')
 const passport = require('./config/password')
+const methodOverride = require('method-override')
 const app = express()
 const PORT = 3000
 
@@ -12,6 +13,7 @@ if (process.env.NODE_ENV !== 'production') { require('dotenv').config() }
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
 app.set('view engine', 'handlebars')
+app.use(methodOverride('_method'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(session({ secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false }))
 app.use(passport.initialize())

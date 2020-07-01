@@ -14,7 +14,6 @@ const adminController = {
     return Restaurant.findByPk(id, { raw: true }).then(restaurant => {
       return res.render('admin/restaurant', { restaurant })
     })
-
   },
   //瀏覽新增頁面
   createRestaurant: (req, res) => {
@@ -32,6 +31,22 @@ const adminController = {
         req.flash('successMsg', 'restaurant was successfully created')
         res.redirect('/admin/restaurants')
       })
+  },
+  //瀏覽編輯餐廳頁面
+  editRestaurant: (req, res) => {
+    const id = req.params.id
+    return Restaurant.findByPk(id, { raw: true })
+      .then(restaurant => res.render('admin/create', { restaurant }))
+  },
+  //編輯資料庫餐廳資料
+  putRestaurant: (req, res) => {
+    const id = req.params.id
+    const { name, tel, address, opening_hours, description } = req.body
+    return Restaurant.findByPk(id)
+      .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description }))
+      .then(() => res.redirect('/admin/restaurants'))
+      .catch(error => console.log('error'))
   }
 }
+
 module.exports = adminController

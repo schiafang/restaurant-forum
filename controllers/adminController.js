@@ -115,7 +115,10 @@ const adminController = {
         if (user.isAdmin) user.update({ isAdmin: false })
         else user.update({ isAdmin: true })
       })
-      .then(() => res.redirect('/admin/users'))
+      .then(() => {
+        req.flash('successMsg', '成功變更使用者身份')
+        res.redirect('/admin/users')
+      })
   }
 }
 

@@ -1,4 +1,4 @@
-<div class="container" style="margin-top: 100px;">
+<div class="container mb-5" style="margin-top: 100px;">
   {{#if restaurant}}
   <h4>編輯餐廳</h4>
   <form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
@@ -37,9 +37,12 @@
 
       <div class="form-group">
         <label for="image">Image</label>
+        <br>
+        <img class="img-responsive center-block" src="{{restaurant.image}}" style="width: 250px;margin-bottom: 25px;">
         <input type="file" class="form-control-file" id="image" name="image">
       </div>
 
       <button type="submit" class="btn btn-primary">Submit</button>
+      <a href="javascript:history.back()">取消返回</a>
     </form>
 </div>

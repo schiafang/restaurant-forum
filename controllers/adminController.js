@@ -1,7 +1,9 @@
 const db = require('../models')
 const Restaurant = db.Restaurant
 const User = db.User
-const fs = require('fs')
+// const fs = require('fs')
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const adminController = {
   //瀏覽全部餐廳
@@ -31,12 +33,20 @@ const adminController = {
       return res.redirect('back')
     }
     if (file) {
-      fs.readFile(file.path, (err, data) => {
-        if (err) console.log('Error: ', err)
-        fs.writeFile(`upload/${file.originalname}`, data, () => {
-          return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
-            .then(() => res.redirect('/admin/restaurants'))
-        })
+      // 本地將圖片儲存至 upload 資料夾
+      // fs.readFile(file.path, (err, data) => {
+      //   if (err) console.log('Error: ', err)
+      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
+      //     return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
+      //       .then(() => res.redirect('/admin/restaurants'))
+      //   })
+      // })
+
+      // 將圖片轉存至 imgur
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? img.data.link : null })
+          .then(() => res.redirect('/admin/restaurants'))
       })
     } else {
       return Restaurant.create({ name, tel, address, opening_hours, description })
@@ -59,15 +69,21 @@ const adminController = {
       return res.redirect('back')
     }
     if (file) {
-      fs.readFile(file.path, (err, data) => {
-        if (err) console.log('Error: ', err)
-        fs.writeFile(`upload/${file.originalname}`, data, () => {
-          return Restaurant.findByPk(id)
-            .then(restaurant => {
-              return restaurant.update({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
-            })
-            .then(() => res.redirect('/admin/restaurants'))
-        })
+      // fs.readFile(file.path, (err, data) => {
+      //   if (err) console.log('Error: ', err)
+      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
+      //     return Restaurant.findByPk(id)
+      //       .then(restaurant => {
+      //         return restaurant.update({ name, tel, address, opening_hours, description, image: file ? img.data.link : null })
+      //       })
+      //       .then(() => res.redirect('/admin/restaurants'))
+      //   })
+      // })
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        return Restaurant.findByPk(id)
+          .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description, image: file ? img.data.link : null }))
+          .then(() => res.redirect('/admin/restaurants'))
       })
     } else {
       return Restaurant.findByPk(id)

@@ -1,0 +1,35 @@
+<div class="container" style="margin-top: 100px;">
+  <h1>餐廳後台</h1>
+  <div class="row justify-content-between">
+    <div class="mt-3 ml-3">
+      <a href="/admin/restaurants">餐廳列表</a> |
+      <a href="/admin/users">使用者列表</a>
+    </div>
+    <div class="mr-3">
+      <a href='/admin/users/create'><button type="button" class="btn btn-light" disabled>新增使用者</button></a>
+    </div>
+  </div>
+  <hr>
+</div>
+<div class="container">
+  <table class="table">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col-2">User ID</th>
+        <th scope="col-3">Email</th>
+        <th scope="col-3">Role</th>
+        <th scope="col-4">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each users}}
+      <tr>
+        <td>{{this.id}}</td>
+        <td>{{this.email}}</td>
+        <td>{{#if this.isAdmin}}admin {{else}} user {{/if}}</td>
+        <td>{{#if this.isAdmin}}<a href="#">set as user</a>{{else}}<a href="#">set as admin</a>{{/if}}</td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

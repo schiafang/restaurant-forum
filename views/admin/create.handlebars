@@ -1,9 +1,9 @@
-<div class="container">
+<div class="container" style="margin-top: 100px;">
   {{#if restaurant}}
-  <h1>編輯餐廳</h1>
+  <h4>編輯餐廳</h4>
   <form action="/admin/restaurants/{{restaurant.id}}?_method=PUT" method="POST" enctype="multipart/form-data">
     {{else}}
-    <h1>新增餐廳</h1>
+    <h4>新增餐廳</h4>
     <form action="/admin/restaurants" method="POST" enctype="multipart/form-data">
       {{/if}}
       <div class="form-group">

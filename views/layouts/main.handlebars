@@ -11,24 +11,21 @@
 
 <body>
   <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-    <a class="navbar-brand" href="/">Restaurant Forum</a>
+    <a class="navbar-brand ml-5" href="/">餐廳論壇 <span style="color: rgb(184, 183, 183);">Restaurant Forum</span></a>
     <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
       <ul class="navbar-nav mr-auto"></ul>
       <div>
         {{#if user.isAdmin}}
-        <a href="/admin" style="color: white;margin-right: 10px;">Admin 後台</a>
+        <a href="/admin" style="color: rgb(35, 160, 209);margin-right: 10px;">Admin 後台</a>
         {{/if}}
         {{#if user}}
         <span style="color: white;margin-right: 10px;">Hi, {{user.email}}</span>
-        <a href="/users/{{user.id}}"><button class="btn btn-outline-primary my-2 my-sm-0">Profile</button></a>
-        <a href="/logout"><button class="btn btn-success my-2 my-sm-0">LogOut</button></a>
+        <a href="/users/{{user.id}}"><button class="btn btn-outline-info my-2 my-sm-0"
+            style="border: none;">Profile</button></a>
+        <a href="/logout"><button class="btn btn-outline-warning my-2 my-sm-0" style="border: none;">LogOut</button></a>
         {{/if}}
       </div>
     </div>
-  </nav>
-
-  <nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand" href="/">Restaurant Forum</a>
   </nav>
 
   {{{body}}}

@@ -27,7 +27,13 @@
         <td>{{this.id}}</td>
         <td>{{this.email}}</td>
         <td>{{#if this.isAdmin}}admin {{else}} user {{/if}}</td>
-        <td>{{#if this.isAdmin}}<a href="#">set as user</a>{{else}}<a href="#">set as admin</a>{{/if}}</td>
+        <td>
+          <form action="/admin/users/{{this.id}}?_method=PUT" method="POST"
+            onsubmit="return window.confirm('確定要變更使用者{{this.email}}身份嗎？')">
+            <button type="submit" style="border: none; background-color:white;">{{#if this.isAdmin}}set as
+              User{{else}}set as Admin{{/if}}</button>
+          </form>
+        </td>
       </tr>
       {{/each}}
     </tbody>

@@ -99,6 +99,23 @@ const adminController = {
       .then(restaurant => restaurant.destroy())
       .then(() => res.redirect('/admin/restaurants'))
       .catch(error => console.log('error'))
+  },
+  //顯示使用者清單
+  getUsers: (req, res) => {
+    return User.findAll({ raw: true }).then(users => {
+      return res.render('admin/users', { users })
+    })
+  },
+  //修改使用者
+  putUsers: (req, res) => {
+    const id = req.params.id
+    console.log(id)
+    return User.findByPk(id)
+      .then(user => {
+        if (user.isAdmin) user.update({ isAdmin: false })
+        else user.update({ isAdmin: true })
+      })
+      .then(() => res.redirect('/admin/users'))
   }
 }
 

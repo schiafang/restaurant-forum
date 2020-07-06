@@ -7,8 +7,10 @@
       <a href="/admin/categories">分類清單</a>
     </div>
     <div class="mr-3" style="display: flex; justify-content:center;">
-      <input type="text" placeholder=" 輸入分類名稱">
-      <a href="#"><button type="button" class="ml-3 btn btn-light" disabled>新增分類</button></a>
+      <form action="/admin/categories" method="POST">
+        <input type="text" name="name" placeholder=" 輸入分類名稱">
+        <a href="#"><button type="submit" class="ml-3 btn btn-light">新增分類</button></a>
+      </form>
     </div>
   </div>
   <hr>

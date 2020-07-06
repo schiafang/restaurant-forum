@@ -15,6 +15,10 @@ const restController = {
       return res.render('restaurants', { restaurants: JSON.parse(JSON.stringify(data)) })
     })
   },
-
+  getRestaurant: (req, res) => {
+    const id = req.params.id
+    return Restaurant.findByPk(id, { raw: true, nest: true, include: Category })
+      .then(restaurant => res.render('restaurant', { restaurant }))
+  }
 }
 module.exports = restController

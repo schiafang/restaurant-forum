@@ -9,21 +9,23 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 const adminController = {
   //瀏覽全部餐廳
   getRestaurants: (req, res) => {
-    return Restaurant.findAll({ raw: true, nest: true, include: [Category] }).then(restaurants => {
-      console.log(restaurants[0])
+    Restaurant.findAll({ raw: true, nest: true, include: [Category] }).then(restaurants => {
       return res.render('admin/restaurants', { restaurants })
     })
   },
   //瀏覽指定餐廳
   getRestaurant: (req, res) => {
     const id = req.params.id
-    return Restaurant.findByPk(id, { raw: true, nest: true, include: [Category] }).then(restaurant => {
+    Restaurant.findByPk(id, { raw: true, nest: true, include: [Category] }).then(restaurant => {
       return res.render('admin/restaurant', { restaurant })
     })
   },
   //瀏覽新增頁面
   createRestaurant: (req, res) => {
-    return res.render('admin/create')
+    Category.findAll({ raw: true, nest: true })
+      .then(categories => {
+        return res.render('admin/create', { categories })
+      })
   },
   //新增餐廳資料
   postRestaurant: (req, res) => {
@@ -58,8 +60,13 @@ const adminController = {
   //瀏覽編輯餐廳頁面
   editRestaurant: (req, res) => {
     const id = req.params.id
-    return Restaurant.findByPk(id, { raw: true })
-      .then(restaurant => res.render('admin/create', { restaurant }))
+    Category.findAll({ raw: true, nest: true })
+      .then(categories => {
+        return Restaurant.findByPk(id, { raw: true })
+          .then(restaurant => {
+            return res.render('admin/create', { restaurant, categories })
+          })
+      })
   },
   //編輯資料庫餐廳資料
   putRestaurant: (req, res) => {

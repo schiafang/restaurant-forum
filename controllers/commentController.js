@@ -10,6 +10,11 @@ module.exports = {
       .then(() => res.redirect(`/restaurants/${RestaurantId}`))
   },
   deleteComment: (req, res) => {
-
+    console.log(req.params.id)
+    return Comment.findByPk(req.params.id)
+      .then(comment => {
+        comment.destroy()
+          .then(() => res.redirect(`/restaurants/${comment.RestaurantId}`))
+      })
   }
 }

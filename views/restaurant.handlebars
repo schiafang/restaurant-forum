@@ -28,8 +28,15 @@
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
   <br />
-  <h3>所有評論：</h3>
+  <hr>
+  <h4>所有評論：</h4>
   {{#each restaurant.Comments}}
+  {{#if ../user.isAdmin}}
+  <form action="/comments/{{this.id}}?_method=DELETE" method="POST" style="float: right;"
+    onsubmit="return confirm('確定要刪除這則留言嗎？')">
+    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+  </form>
+  {{/if}}
   <blockquote class="blockquote mb-0">
     {{!-- <h4><a href="/users/{{this.User.id}}">{{this.User.name}}</a></h4> --}}
     <p>{{this.text}}</p>
@@ -40,3 +47,6 @@
   <br />
   <a href="javascript:history.back()">回上一頁</a>
 </div>
+<br />
+<br />
+<br />

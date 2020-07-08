@@ -59,6 +59,15 @@ const restController = {
         return res.render('feeds', { restaurants, comments })
       })
     })
+  },
+  getDashboard: (req, res) => {
+    const id = req.params.id
+    Comment.findAndCountAll({ where: { RestaurantId: id } }).then(result => {
+      let commentsCount = result.count
+      return Restaurant.findByPk(id, { include: [Category] }).then(restaurant => {
+        res.render('dashboard', { restaurant: restaurant.toJSON(), commentsCount })
+      })
+    })
   }
 }
 module.exports = restController

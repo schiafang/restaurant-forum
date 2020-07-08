@@ -15,4 +15,16 @@
       </div>
     </div>
   </div>
+  <div class="card mt-5">
+    <div class="card-header">
+      {{count}} 已評論餐廳
+    </div>
+    <div class="card-body">
+      {{#each profile.Comments}}
+      <a href="/restaurants/{{this.Restaurant.id}}" style="margin:10px" title="{{this.Restaurant.name}}">
+        <img src="{{this.Restaurant.image}}" alt="" width="50px" height="50px">
+      </a>
+      {{/each}}
+    </div>
+  </div>
 </div>

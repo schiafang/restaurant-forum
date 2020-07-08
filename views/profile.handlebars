@@ -1,0 +1,18 @@
+<div class="container w-50" style="margin-top: 130px;">
+  <div class="row align-items-center">
+    <div class="col-6" style="display:flex; justify-content: center;">
+      <img src="{{profile.image}}" alt="" width="250px;" height="250px" style="border-radius: 100%;">
+    </div>
+    <div class="col-6">
+      <h5>{{profile.name}}的個人頁面</h5>
+      <h6>{{profile.email}}</h6>
+      <div style=" float: right;">
+        {{#ifCond user.id profile.id}}
+        <a href="/users/{{profile.id}}/edit">編輯</a>
+        <span>|</span>
+        {{/ifCond}}
+        <a href="javascript:history.back()">返回</a>
+      </div>
+    </div>
+  </div>
+</div>

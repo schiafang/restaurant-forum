@@ -1,0 +1,55 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="/restaurants">首頁</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="/restaurants/feeds">最新動態</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Link</a>
+  </li>
+</ul>
+
+<div class="row mt-3">
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">最新餐廳</div>
+      <div class="card-body" style="overflow:scroll; max-height: 550px;">
+        {{#each restaurants}}
+        <div>
+          <h4>
+            <a href="/restaurants/{{this.id}}">{{this.name}}</a>
+            <span style="font-size:0.6em">{{this.Category.name}}</span>
+          </h4>
+          <p>{{this.description}}</p>
+          <div style="color: gray; font-size:small; text-align: right;">
+            {{moment this.createdAt}}
+          </div>
+          <hr>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card">
+      <div class="card-header">最新評論</div>
+      <div class="card-body" style="overflow:scroll; max-height: 550px;">
+        {{#each comments}}
+        <div>
+          <h4>
+            <a href="/restaurants/{{this.Restaurant.id}}">{{this.Restaurant.name}}</a>
+          </h4>
+          <p>{{this.text}}</p>
+          <div style="color: gray; font-size:small; text-align:right;">
+            at {{moment this.createdAt}}
+            by <a href="/users/{{this.User.id}}"><img src="{{this.User.image}} " alt="" width="20px;" height="20px;"
+                style="border-radius: 100%;"> {{this.User.name}}</a>
+          </div>
+          <hr>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>

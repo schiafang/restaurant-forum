@@ -31,31 +31,32 @@ const adminController = {
   postRestaurant: (req, res) => {
     const { name, tel, address, opening_hours, description } = req.body
     const { file } = req
+    console.log(file)
 
     if (!req.body.name) {
       req.flash('errorMsg', "name didn't exist")
       return res.redirect('back')
     }
-    if (file) {
-      // 本地將圖片儲存至 upload 資料夾
-      // fs.readFile(file.path, (err, data) => {
-      //   if (err) console.log('Error: ', err)
-      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
-      //     return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
-      //       .then(() => res.redirect('/admin/restaurants'))
-      //   })
-      // })
+    // if (file) {
+    // 本地將圖片儲存至 upload 資料夾
+    // fs.readFile(file.path, (err, data) => {
+    //   if (err) console.log('Error: ', err)
+    //   fs.writeFile(`upload/${file.originalname}`, data, () => {
+    //     return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
+    //       .then(() => res.redirect('/admin/restaurants'))
+    //   })
+    // })
 
-      // 將圖片轉存至 imgur
-      imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? img.data.link : null })
-          .then(() => res.redirect('/admin/restaurants'))
-      })
-    } else {
-      return Restaurant.create({ name, tel, address, opening_hours, description })
-        .then(() => res.redirect('/admin/restaurants'))
-    }
+    // 將圖片轉存至 imgur
+    // imgur.setClientID(IMGUR_CLIENT_ID)
+    // imgur.upload(file.path, (err, img) => {
+    //   return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? img.data.link : null })
+    //     .then(() => res.redirect('/admin/restaurants'))
+    // })
+    // } else {
+    return Restaurant.create({ name, tel, address, opening_hours, description })
+      .then(() => res.redirect('/admin/restaurants'))
+    // }
   },
   //瀏覽編輯餐廳頁面
   editRestaurant: (req, res) => {
@@ -116,13 +117,13 @@ const adminController = {
     })
   },
   //修改使用者
-  putUsers: (req, res) => {
+  putUser: (req, res) => {
     const id = req.params.id
     console.log(id)
     return User.findByPk(id)
       .then(user => {
-        if (user.isAdmin) user.update({ isAdmin: false })
-        else user.update({ isAdmin: true })
+        if (user.isAdmin) { return user.update({ isAdmin: false }) }
+        return user.update({ isAdmin: true })
       })
       .then(() => {
         req.flash('successMsg', '成功變更使用者身份')

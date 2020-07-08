@@ -2,6 +2,7 @@ const db = require('../models')
 const Restaurant = db.Restaurant
 const User = db.User
 const Category = db.Category
+const Comment = db.Comment
 // const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -105,8 +106,11 @@ const adminController = {
   //刪除餐廳資料
   deleteRestaurant: (req, res) => {
     const id = req.params.id
-    return Restaurant.findByPk(id)
-      .then(restaurant => restaurant.destroy())
+    return Restaurant.findByPk(id, { include: [Comment] })
+      .then(restaurant => {
+        restaurant.Comments[0].destroy()
+        restaurant.destroy()
+      })
       .then(() => res.redirect('/admin/restaurants'))
       .catch(error => console.log('error'))
   },

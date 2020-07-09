@@ -36,6 +36,14 @@
         <span class="badge badge-secondary">{{this.categoryName}}</span>
         <p class="card-text">{{this.description}}</p>
       </div>
+      <div class="card-footer row justify-content-end">
+        <form action="/favorite/{{this.id}}" method="POST" onsubmit="alert('已將{{this.name}}加入最愛')">
+          <button type=" submit" class="btn btn-light btn-sm">加入最愛</button>
+        </form>
+        <form action="/favorite/{{this.id}}?_method=DELETE" onsubmit="alert('已將{{this.name}}移除最愛')" method="POST">
+          <button type="submit" class="btn btn-light btn-sm">移除最愛</button>
+        </form>
+      </div>
     </div>
   </div>
   {{/each}}

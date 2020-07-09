@@ -3,6 +3,7 @@ const db = require('../models')
 const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
+const Favorite = db.Favorite
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
@@ -77,6 +78,19 @@ const userController = {
         .then(user => user.update({ name }))
         .then(() => res.redirect(`${id}`))
     }
+  },
+  addFavorite: (req, res) => {
+    const RestaurantId = req.params.id
+    const UserId = req.user.id
+    return Favorite.create({ UserId, RestaurantId })
+      .then(() => res.redirect('back'))
+  },
+  removeFavorite: (req, res) => {
+    const RestaurantId = req.params.id
+    const UserId = req.user.id
+    return Favorite.findOne({ where: { UserId, RestaurantId } })
+      .then(favorite => favorite.destroy())
+      .then(() => res.redirect('back'))
   }
 }
 module.exports = userController

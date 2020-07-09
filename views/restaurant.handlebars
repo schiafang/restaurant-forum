@@ -15,7 +15,24 @@
         {{/if}}</div>
     </div>
     <div class="col-md-12">
-      <h1>{{restaurant.name}}</h1>
+      <div class="row">
+        <h1 class="mr-2">{{restaurant.name}}</h1>
+        <div class="mt-1">
+          {{#if isLike}}
+          <form action="/like/{{restaurant.id}}?_method=DELETE" method="POST">
+            <button type="submit" class="btn btn-sm" style=" color:rgb(76, 139, 197)">
+              <i class="fas fa-thumbs-up fa-2x"></i><span class="ml-2" style="font-size: 25px;">{{likeCount}}</span>
+            </button>
+          </form>
+          {{else}}
+          <form action="/like/{{restaurant.id}}" method="POST">
+            <button type="submit" class="btn btn-sm" style="color:rgb(76, 139, 197)"><i
+                class="far fa-thumbs-up fa-2x"></i><span class="ml-2"
+                style="font-size: 25px;">{{likeCount}}</span></button>
+          </form>
+          {{/if}}
+        </div>
+      </div>
       <h6>{{restaurant.Category.name}}</h6>
     </div>
     <div class="col-md-4">

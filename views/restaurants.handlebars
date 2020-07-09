@@ -33,17 +33,30 @@
         <p class="card-text">{{this.description}}</p>
       </div>
       <div class="card-footer">
-        <div style="float: right;">
-          {{#if isFavorited}}
-          <form action="/favorite/{{restaurant.id}}?_method=DELETE" onsubmit="alert('已將{{restaurant.name}}移除最愛')"
-            method="POST">
-            <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-star"></i></button>
+        <div class="row">
+
+          {{#if this.isFavorited}}
+          <form action="/favorite/{{this.id}}?_method=DELETE" onsubmit="alert('已將{{this.name}}移除最愛')" method="POST">
+            <button type="submit" class="ml-2 mr-2 btn btn-warning btn-sm"><i class="fas fa-star"></i></button>
           </form>
           {{else}}
-          <form action="/favorite/{{restaurant.id}}" method="POST" onsubmit="alert('已將{{restaurant.name}}加入最愛')">
-            <button type="submit" class="btn btn-outline-warning btn-sm"><i class="far fa-star"></i></button>
+          <form action="/favorite/{{this.id}}" method="POST" onsubmit="alert('已將{{this.name}}加入最愛')">
+            <button type="submit" class="ml-2 mr-2 btn btn-outline-warning btn-sm"><i class="far fa-star"></i></button>
           </form>
           {{/if}}
+
+          {{#if this.isLike}}
+          <form action=" /like/{{this.id}}?_method=DELETE" method="POST">
+            <button type="submit" class="btn btn-sm" style=" color:rgb(76, 139, 197)"><i
+                class=" fas fa-thumbs-up fa-lg"></i></button>
+          </form>
+          {{else}}
+          <form action="/like/{{this.id}}" method="POST">
+            <button type="submit" class="btn btn-sm" style="color:rgb(76, 139, 197)"><i
+                class="far fa-thumbs-up fa-lg"></i></button>
+          </form>
+          {{/if}}
+
         </div>
       </div>
     </div>

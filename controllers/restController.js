@@ -26,7 +26,8 @@ const restController = {
             ...restaurant.dataValues,
             description: restaurant.dataValues.description.substring(0, 50),
             categoryName: restaurant.Category.name,
-            isFavorited: req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id)
+            isFavorited: req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id),
+            isLike: req.user.RestaurantsLike.map(item => item.id).includes(restaurant.id)
           }))
         const restaurants = JSON.parse(JSON.stringify(data))
 
@@ -41,13 +42,16 @@ const restController = {
       include: [
         Category,
         { model: User, as: 'FavoritedUsers' },
+        { model: User, as: 'LikeByUsers' },
         { model: Comment, include: [User] }
       ]
     })
       .then(restaurant => {
         const isFavorited = restaurant.FavoritedUsers.map(item => item.id).includes(req.user.id)
+        const isLike = restaurant.LikeByUsers.map(item => item.id).includes(req.user.id)
+        const likeCount = restaurant.LikeByUsers.map(item => item.id).length
         restaurant.increment('viewCounts')
-          .then(restaurant => res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited }))
+          .then(restaurant => res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLike, likeCount }))
       })
   },
   getFeeds: (req, res) => {

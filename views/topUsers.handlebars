@@ -1,0 +1,36 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="/restaurants">首頁</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/restaurants/feeds">最新動態</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="/users/top">美食達人</a>
+  </li>
+</ul>
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">美食達人</div>
+    <div class="card-body" style="overflow:scroll; max-height: 550px;">
+      <div class="row">
+        {{#each users}}
+        <div class="col-sm-6 col-md-4 col-lg-2 mb-4 mt-1"
+          style="display: flex; flex-direction:column; align-items:center">
+          <a href="/users/{{this.id}}">
+            <img src="{{this.image}}" alt="" width="100px" height="100px">
+          </a>
+          <h5 class="mt-2 mb-3">{{this.name}}</h5>
+          <span>追蹤人數 {{this.followerCount}}</span>
+          {{#if isFollowed}}
+          <button class="mt-1 btn btn-success btn-sm">取消追蹤</button>
+          {{else}}
+          <button class="mt-1 btn btn-outline-success btn-sm">&emsp;追蹤&emsp;</button>
+          {{/if}}
+        </div>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+</div>
+</div>

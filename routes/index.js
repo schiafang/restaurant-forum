@@ -56,6 +56,8 @@ module.exports = (app, passport) => {
   app.post('/like/:id', authenticated, userController.addLike)
   app.delete('/like/:id', authenticated, userController.removeLike)
 
+  app.get('/users/top', authenticated, userController.getTopUsers)
+
   app.get('/users/:id', authenticated, userController.getUser)
   app.get('/users/:id/edit', authenticated, userController.editUser)
   app.put('/users/:id', authenticated, upload.single('image'), userController.putUser)

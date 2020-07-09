@@ -2,7 +2,17 @@
   <div class="row">
     <div class="col-12">
       <a href="/restaurants/{{restaurant.id}}/dashboard" style="float: right;"><button
-          class="btn btn-outline-secondary btn-sm">DASHBOARD</button></a>
+          class="ml-1 btn btn-outline-secondary btn-sm">DASHBOARD</button></a>
+      <div style="float: right;">{{#if isFavorited}}
+        <form action="/favorite/{{restaurant.id}}?_method=DELETE" onsubmit="alert('已將{{restaurant.name}}移除最愛')"
+          method="POST">
+          <button type="submit" class="btn btn-warning btn-sm"><i class="fas fa-star"></i></button>
+        </form>
+        {{else}}
+        <form action="/favorite/{{restaurant.id}}" method="POST" onsubmit="alert('已將{{restaurant.name}}加入最愛')">
+          <button type="submit" class="btn btn-outline-warning btn-sm"><i class="far fa-star"></i></button>
+        </form>
+        {{/if}}</div>
     </div>
     <div class="col-md-12">
       <h1>{{restaurant.name}}</h1>

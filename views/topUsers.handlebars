@@ -22,11 +22,19 @@
           </a>
           <h5 class="mt-2 mb-3">{{this.name}}</h5>
           <span>追蹤人數 {{this.followerCount}}</span>
-          {{#if isFollowed}}
-          <button class="mt-1 btn btn-success btn-sm">取消追蹤</button>
+          {{#ifCond ../user.id this.id}}
           {{else}}
-          <button class="mt-1 btn btn-outline-success btn-sm">&emsp;追蹤&emsp;</button>
+          {{#if isFollowed}}
+          <form action="/following/{{this.id}}?_method=DELETE" method="POST">
+            <button type="submit" class="mt-1 btn btn-success btn-sm">取消追蹤</button>
+          </form>
+          {{else}}
+          <form action="/following/{{this.id}}" method="POST">
+            <button type="submit" class="mt-1 btn btn-outline-success btn-sm">&emsp;追蹤&emsp;</button>
+          </form>
           {{/if}}
+
+          {{/ifCond}}
         </div>
         {{/each}}
       </div>

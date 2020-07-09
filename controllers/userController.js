@@ -5,6 +5,7 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Favorite = db.Favorite
 const Like = db.Like
+const Followship = db.Followship
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
@@ -46,10 +47,18 @@ const userController = {
   },
   getUser: (req, res) => {
     const id = req.params.id
+    // console.log(req.user)
     Comment.findAndCountAll({ where: { UserId: id } }).then(result => {
       let count = result.count
-      return User.findByPk(id, { include: { model: Comment, include: [Restaurant] } })
-        .then(profile => res.render('profile', { profile: profile.toJSON(), count }))
+      return User.findByPk(id, {
+        include: [
+          { model: Comment, include: [Restaurant] }
+        ]
+      })
+        .then(profile => {
+          const isFollowing = req.user.Followings.map(item => item.id).includes(Number(id))
+          return res.render('profile', { profile: profile.toJSON(), count, isFollowing })
+        })
     })
   },
   editUser: (req, res) => {
@@ -107,6 +116,7 @@ const userController = {
       .then(() => res.redirect('back'))
   },
   getTopUsers: (req, res) => {
+    const UserId = req.user.id
     return User.findAll({ include: { model: User, as: 'Followers' } })
       .then(users => {
         users = users.map(user => ({
@@ -115,11 +125,22 @@ const userController = {
           isFollowed: req.user.Followings.map(item => item.id).includes(user.id)
         }))
         users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
-        return res.render('topUsers', { users })
+        return res.render('topUsers', { users, UserId })
       })
+  },
+  addFollowing: (req, res) => {
+    const followingId = req.params.id
+    const followerId = req.user.id
+    return Followship.create({ followingId, followerId })
+      .then(() => res.redirect('back'))
+  },
+  removeFollowing: (req, res) => {
+    const followingId = req.params.id
+    const followerId = req.user.id
+    return Followship.findOne({ where: { followingId, followerId } })
+      .then(followship => followship.destroy())
+      .then(() => res.redirect('back'))
   }
 }
 module.exports = userController
-
-
 

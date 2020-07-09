@@ -6,7 +6,21 @@
     <div class="col-6">
       <h5>{{profile.name}}的個人頁面</h5>
       <h6>{{profile.email}}</h6>
-      <div style=" float: right;">
+      <div>
+        {{#ifCond user.id profile.id}}
+        {{else}}
+        {{#if isFollowing}}
+        <form action="/following/{{profile.id}}?_method=DELETE" method="POST">
+          <button type="submit" class="mt-1 btn btn-success btn-sm">取消追蹤</button>
+        </form>
+        {{else}}
+        <form action="/following/{{profile.id}}" method="POST">
+          <button type="submit" class="mt-1 btn btn-outline-success btn-sm">&emsp;追蹤&emsp;</button>
+        </form>
+        {{/if}}
+        {{/ifCond}}
+      </div>
+      <div style="float: right;">
         {{#ifCond user.id profile.id}}
         <a href="/users/{{profile.id}}/edit">編輯</a>
         <span>|</span>

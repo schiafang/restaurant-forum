@@ -1,0 +1,43 @@
+<ul class="nav nav-tabs">
+  <li class="nav-item">
+    <a class="nav-link" href="/restaurants">首頁</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/restaurants/feeds">最新動態</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/users/top">美食達人</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="/restaurants/top">TOP 10 餐廳</a>
+  </li>
+</ul>
+<div class="row mt-3 justify-content-center">
+  <div class="col-10">
+    <div class="card">
+      <div class="card-header">人氣餐廳</div>
+      <div class="card-body" style="overflow:scroll; max-height: 550px;">
+        {{#each restaurants}}
+        <div class="row">
+          <h2 class="col-1 mt-3">{{this.rank}}</h2>
+          <div class="col-4" style="background-image: url({{this.image}}); height:150px"></div>
+          <div class="col-7">
+            <h4><a href="/restaurants/{{this.id}}">{{this.name}}</a></h4>
+            <p>{{this.description}}</p>
+            <span class="badge badge-light">{{this.favoritedUsersCount}} 人收藏</span>
+            {{#if this.isFavorited}}
+            <form action="/favorite/{{this.id}}?_method=DELETE" method="POST">
+              <button class="mr-2 btn btn-warning btn-sm" style="float: right;">已收藏餐廳</button>
+            </form>
+            {{else}}
+            <form action="/favorite/{{this.id}}" method="POST">
+              <button class="mr-2 btn btn-outline-warning btn-sm" style="float: right;">收藏此餐廳</button>
+            </form>
+            {{/if}}
+          </div>
+        </div>
+        <hr>
+        {{/each}}
+      </div>
+    </div>
+  </div>

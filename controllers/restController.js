@@ -77,10 +77,26 @@ const restController = {
     const id = req.params.id
     Comment.findAndCountAll({ where: { RestaurantId: id } }).then(result => {
       let commentsCount = result.count
-      return Restaurant.findByPk(id, { include: [Category] }).then(restaurant => {
-        res.render('dashboard', { restaurant: restaurant.toJSON(), commentsCount })
-      })
+      return Restaurant.findByPk(id, { include: [Category, { model: User, as: 'FavoritedUsers' },] })
+        .then(restaurant => {
+          let favoritedUsersCount = restaurant.FavoritedUsers.length
+          res.render('dashboard', { restaurant: restaurant.toJSON(), commentsCount, favoritedUsersCount })
+        })
     })
+  },
+  getTopRestaurants: (req, res) => {
+    return Restaurant.findAll({ include: { model: User, as: 'FavoritedUsers' } })
+      .then(restaurants => {
+        restaurants = restaurants.sort((a, b) => b.FavoritedUsers.length - a.FavoritedUsers.length).slice(0, 10)
+        restaurants = JSON.parse(JSON.stringify(restaurants)).map((restaurant, i) => ({
+          ...restaurant,
+          description: restaurant.description.substring(0, 50),
+          isFavorited: req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id),
+          favoritedUsersCount: restaurant.FavoritedUsers.length,
+          rank: i + 1
+        }))
+        res.render('topRestaurants', { restaurants })
+      })
   }
 }
 module.exports = restController

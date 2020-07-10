@@ -38,7 +38,7 @@ const userController = {
           req.flash('errorMsg', '此信箱已經註冊')
           return res.render('signup', { name, email, password })
         }
-        User.create({ name, email, password: hashPassword, image })
+        return User.create({ name, email, password: hashPassword, image })
           .then(() => {
             req.flash('successMsg', '註冊成功')
             res.redirect('/signin')
@@ -47,22 +47,41 @@ const userController = {
   },
   getUser: (req, res) => {
     const id = req.params.id
-    // console.log(req.user)
-    Comment.findAndCountAll({ where: { UserId: id } }).then(result => {
-      let count = result.count
-      return User.findByPk(id, {
-        include: [
-          { model: Comment, include: [Restaurant] }
-        ]
-      })
-        .then(profile => {
-          const isFollowing = req.user.Followings.map(item => item.id).includes(Number(id))
-          return res.render('profile', { profile: profile.toJSON(), count, isFollowing })
-        })
+    // User.findByPk(id, { include: { all: true } })  //偷吃步通通撈出來
+    User.findByPk(id, {
+      include: [
+        { model: Restaurant, as: 'FavoritedRestaurants' },
+        { model: User, as: 'Followings' },
+        { model: User, as: 'Followers' },
+        { model: Comment, include: Restaurant }
+      ]
     })
+      .then(profile => {
+        profile = profile.toJSON()
+        //取出所有評論過的餐廳中需要且會重複的資料(id,name,image)
+        let commentsRestaurant = profile.Comments.map(item => ({
+          id: item.Restaurant.id,
+          name: item.Restaurant.name,
+          image: item.Restaurant.image
+        }))
+        //過濾重複物件
+        let set = new Set()
+        commentsRestaurant = commentsRestaurant.filter(item => !set.has(item.id) ? set.add(item.id) : false)
+
+        const isFollowing = req.user.Followings.map(item => item.id).includes(Number(id)) //判斷使用者是否已追隨此用戶
+        const countCommentedRestaurant = commentsRestaurant.length //計算已評論餐廳數
+        const countFavoritedRestaurants = profile.FavoritedRestaurants.length //計算已收藏餐廳數
+        const countFollowings = profile.Followings.length //計算已追蹤者人數
+        const countFollowers = profile.Followers.length //計算已追蹤者人數
+
+        return res.render('profile', { profile, isFollowing, countCommentedRestaurant, countFavoritedRestaurants, countFollowings, countFollowers, commentsRestaurant })
+      })
   },
   editUser: (req, res) => {
-    const id = req.user.id
+    const id = req.params.id
+
+    if (Number(id) !== req.user.id) { return res.redirect('/restaurants') }
+
     User.findByPk(id, { raw: true }).then(user => {
       res.render('profile-edit', { user })
     })
@@ -124,8 +143,8 @@ const userController = {
           followerCount: user.Followers.length,
           isFollowed: req.user.Followings.map(item => item.id).includes(user.id)
         }))
-        users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
-        return res.render('topUsers', { users, UserId })
+        users = users.sort((a, b) => b.followerCount - a.followerCount)
+        res.render('topUsers', { users, UserId })
       })
   },
   addFollowing: (req, res) => {

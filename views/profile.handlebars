@@ -1,7 +1,7 @@
 <div class="container" style="width:600px;">
   <div class="row align-items-center">
     <div class="col-6" style="display:flex; justify-content: center;">
-      <img src="{{profile.image}}" alt="" width="250px;" height="250px" style="border-radius: 100%;">
+      <img class="rounded-circle" src="{{profile.image}}" alt="" width="250px;" height="250px">
     </div>
     <div class="col-6">
       <h5>{{profile.name}}的個人頁面</h5>
@@ -29,16 +29,54 @@
       </div>
     </div>
   </div>
-  <div class="card mt-5">
-    <div class="card-header">
-      {{count}} 已評論餐廳
+</div>
+
+<div class="row">
+  <div class="col-1"></div>
+  <div class="col-4">
+    <div class="card mt-4" style="height: 200px; overflow:auto">
+      <div class="card-header">{{countFollowings}} Following</div>
+      <div class="card-body">
+        {{#each profile.Followings}}
+        <a href="/users/{{this.id}}" data-toggle="tooltip" title="{{this.name}}">
+          <img class="rounded-circle" src="{{this.image}}" alt="" width="50px" height="50px" style="margin: 5px 0px;">
+        </a>
+        {{/each}}
+      </div>
     </div>
-    <div class="card-body">
-      {{#each profile.Comments}}
-      <a href="/restaurants/{{this.Restaurant.id}}" style="margin:10px" title="{{this.Restaurant.name}}">
-        <img src="{{this.Restaurant.image}}" alt="" width="50px" height="50px">
-      </a>
-      {{/each}}
+    <div class="card mt-4" style="height: 200px;">
+      <div class="card-header">{{countFollowers}} Followers</div>
+      <div class="card-body">
+        {{#each profile.Followers}}
+        <a href="/users/{{this.id}}" title="{{this.name}}">
+          <img class="rounded-circle" src="{{this.image}}" alt="" width="50px" height="50px" style="margin: 5px 0px;">
+        </a>
+        {{/each}}
+      </div>
     </div>
   </div>
+
+  <div class="col-6">
+    <div class="card mt-4" style="height: 200px;">
+      <div class="card-header">{{countCommentedRestaurant}} 已評論餐廳</div>
+      <div class="card-body">
+        {{#each commentsRestaurant}}
+        <a href="/restaurants/{{this.id}}" title="{{this.name}}">
+          <img src="{{this.image}}" alt="" width="50px" height="50px" style="margin: 5px 0px;">
+        </a>
+        {{/each}}
+      </div>
+    </div>
+    <div class="card mt-4" style="height: 200px;">
+      <div class="card-header">{{countFavoritedRestaurants}} 已收藏餐廳</div>
+      <div class="card-body">
+        {{#each profile.FavoritedRestaurants}}
+        <a href="/restaurants/{{this.id}}" title="{{this.name}}">
+          <img src="{{this.image}}" alt="" width="50px" height="50px" style="margin: 5px 0px;">
+        </a>
+        {{/each}}
+      </div>
+    </div>
+  </div>
+
 </div>

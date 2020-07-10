@@ -108,7 +108,7 @@ const adminController = {
     const id = req.params.id
     return Restaurant.findByPk(id, { include: [Comment] })
       .then(restaurant => {
-        restaurant.Comments[0].destroy()
+        if (restaurant.Comments.length !== 0) { restaurant.Comments[0].destroy() }
         restaurant.destroy()
       })
       .then(() => res.redirect('/admin/restaurants'))

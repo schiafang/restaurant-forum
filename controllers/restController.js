@@ -43,15 +43,15 @@ const restController = {
         Category,
         { model: User, as: 'FavoritedUsers' },
         { model: User, as: 'LikeByUsers' },
-        { model: Comment, include: [User] }
+        { model: Comment, include: User }
       ]
     })
+      .then(restaurant => restaurant.increment('viewCounts'))
       .then(restaurant => {
         const isFavorited = restaurant.FavoritedUsers.map(item => item.id).includes(req.user.id)
         const isLike = restaurant.LikeByUsers.map(item => item.id).includes(req.user.id)
         const likeCount = restaurant.LikeByUsers.map(item => item.id).length
-        restaurant.increment('viewCounts')
-          .then(restaurant => res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLike, likeCount }))
+        return res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLike, likeCount })
       })
   },
   getFeeds: (req, res) => {
@@ -75,14 +75,15 @@ const restController = {
   },
   getDashboard: (req, res) => {
     const id = req.params.id
-    Comment.findAndCountAll({ where: { RestaurantId: id } }).then(result => {
-      let commentsCount = result.count
-      return Restaurant.findByPk(id, { include: [Category, { model: User, as: 'FavoritedUsers' },] })
-        .then(restaurant => {
-          let favoritedUsersCount = restaurant.FavoritedUsers.length
-          res.render('dashboard', { restaurant: restaurant.toJSON(), commentsCount, favoritedUsersCount })
-        })
-    })
+
+    Restaurant.findByPk(id, { include: [Category, Comment, { model: User, as: 'FavoritedUsers' },] })
+      .then(restaurant => {
+        restaurant = restaurant.toJSON()
+        const countComments = restaurant.Comments.length
+        const countFavoritedUsers = restaurant.FavoritedUsers.length
+
+        return res.render('dashboard', { restaurant, countComments, countFavoritedUsers })
+      })
   },
   getTopRestaurants: (req, res) => {
     return Restaurant.findAll({ include: { model: User, as: 'FavoritedUsers' } })

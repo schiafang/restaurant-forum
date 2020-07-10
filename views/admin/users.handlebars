@@ -1,3 +1,6 @@
+<div style="position:absolute; margin-left:200px">
+  {{> message}}
+</div>
 <div class="container">
   <h1>餐廳後台</h1>
   <div class="row justify-content-between">
@@ -11,7 +14,7 @@
     </div>
   </div>
   <hr>
-  {{> message}}
+
 </div>
 <div class="container">
   <table class="table">
@@ -32,7 +35,9 @@
         <td>
           <form action="/admin/users/{{this.id}}?_method=PUT" method="POST"
             onsubmit="return window.confirm('確定要變更使用者{{this.email}}身份嗎？')">
-            <button type="submit" style="border: none; background-color:white;">{{#if this.isAdmin}}set as
+            <button type="submit" style="border: none; background-color:white;"
+              {{#ifCond this.id ../user.id}}disabled{{/ifCond}}>
+              {{#if this.isAdmin}}set as
               User{{else}}set as Admin{{/if}}</button>
           </form>
         </td>

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const flash = require('connect-flash')
 const db = require('./models')
-const passport = require('./config/password')
+const passport = require('./config/passport')
 const methodOverride = require('method-override')
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -32,6 +32,6 @@ app.listen(PORT, () => {
   console.log(`app is listening on http://localhost:${PORT}`)
 })
 
-require('./routes/index')(app, passport)
+require('./routes/index')(app)
 
 

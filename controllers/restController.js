@@ -3,6 +3,7 @@ const Restaurant = db.Restaurant
 const Category = db.Category
 const Comment = db.Comment
 const User = db.User
+const Favorite = db.Favorite
 
 const pageLimit = 10
 
@@ -41,15 +42,14 @@ const restController = {
     return Restaurant.findByPk(id, {
       include: [
         Category,
-        { model: User, as: 'FavoritedUsers' },
         { model: User, as: 'LikeByUsers' },
         { model: Comment, include: User }
       ]
     })
       .then(restaurant => restaurant.increment('viewCounts'))
       .then(restaurant => {
-        const isFavorited = restaurant.FavoritedUsers.map(item => item.id).includes(req.user.id)
-        const isLike = restaurant.LikeByUsers.map(item => item.id).includes(req.user.id)
+        const isFavorited = req.user.FavoritedRestaurants.map(item => item.id).includes(Number(id))
+        const isLike = req.user.RestaurantsLike.map(item => item.id).includes(Number(id))
         const likeCount = restaurant.LikeByUsers.map(item => item.id).length
         return res.render('restaurant', { restaurant: restaurant.toJSON(), isFavorited, isLike, likeCount })
       })
@@ -86,12 +86,45 @@ const restController = {
       })
   },
   getTopRestaurants: (req, res) => {
-    return Restaurant.findAll({ include: { model: User, as: 'FavoritedUsers' } })
+    // 1.撈出所有餐廳直接排序
+    // return Restaurant.findAll({ include: { model: User, as: 'FavoritedUsers' } })
+    //   .then(restaurants => {
+    //     restaurants = restaurants.sort((a, b) => b.FavoritedUsers.length - a.FavoritedUsers.length).slice(0, 10)
+    //     restaurants = JSON.parse(JSON.stringify(restaurants)).map((restaurant, i) => ({
+    //       ...restaurant,
+    //       description: restaurant.description.substring(0, 50),
+    //       isFavorited: req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id),
+    //       favoritedUsersCount: restaurant.FavoritedUsers.length,
+    //       rank: i + 1
+    //     }))
+    //     res.render('topRestaurants', { restaurants })
+    //   })
+
+    // 2.先在 Favorite 資料表過濾排序餐廳
+    const Sequelize = require('sequelize')
+    return Favorite.findAll({
+      raw: true,
+      group: 'RestaurantId',
+      attributes: [
+        'RestaurantId',
+        // [Sequelize.fn('COUNT', 'RestaurantId'), 'FavoriteCount'],
+      ],
+      order: [
+        // [Sequelize.literal('FavoriteCount'), 'DESC']
+        [Sequelize.fn('COUNT', 'RestaurantId'), 'DESC']
+      ],
+      limit: 10
+    })
+      .then(results => {
+        const id = results.map(item => item.RestaurantId)
+        return Restaurant.findAll({
+          where: { id },
+          include: { model: User, as: 'FavoritedUsers' }
+        })
+      })
       .then(restaurants => {
-        restaurants = restaurants.sort((a, b) => b.FavoritedUsers.length - a.FavoritedUsers.length).slice(0, 10)
         restaurants = JSON.parse(JSON.stringify(restaurants)).map((restaurant, i) => ({
           ...restaurant,
-          description: restaurant.description.substring(0, 50),
           isFavorited: req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id),
           favoritedUsersCount: restaurant.FavoritedUsers.length,
           rank: i + 1

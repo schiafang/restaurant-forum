@@ -21,44 +21,23 @@ const adminController = {
       res.redirect('/admin/restaurants')
     })
   },
+  postRestaurant: (req, res) => {
+    adminService.postRestaurant(req, res, data => {
+      if (data['status'] === 'error') {
+        req.flash('errorMsg', data['message'])
+        return res.redirect('back')
+      } else {
+        req.flash('successMsg', data['message'])
+        res.redirect('/admin/restaurants')
+      }
+    })
+  },
   //瀏覽新增頁面
   createRestaurant: (req, res) => {
     Category.findAll({ raw: true, nest: true })
       .then(categories => {
         return res.render('admin/create', { categories })
       })
-  },
-  //新增餐廳資料
-  postRestaurant: (req, res) => {
-    const { name, tel, address, opening_hours, description, CategoryId } = req.body
-    const { file } = req
-
-    if (!req.body.name) {
-      req.flash('errorMsg', "name didn't exist")
-      return res.redirect('back')
-    }
-
-    if (file) {
-      // 本地將圖片儲存至 upload 資料夾
-      // fs.readFile(file.path, (err, data) => {
-      //   if (err) console.log('Error: ', err)
-      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
-      //     return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
-      //       .then(() => res.redirect('/admin/restaurants'))
-      //   })
-      // })
-      // 將圖片轉存至 imgur
-      imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        image = file ? img.data.link : null
-        return Restaurant.create({ name, tel, address, opening_hours, description, image, CategoryId })
-          .then(() => res.redirect('/admin/restaurants'))
-      })
-    } else {
-      image = 'https://i.imgur.com/HT8zCpm.png'
-      return Restaurant.create({ name, tel, address, opening_hours, description, CategoryId, image })
-        .then(() => res.redirect('/admin/restaurants'))
-    }
   },
   //瀏覽編輯餐廳頁面
   editRestaurant: (req, res) => {

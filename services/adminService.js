@@ -6,6 +6,7 @@ const Comment = db.Comment
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
+
 const adminService = {
   getRestaurants: (req, res, callback) => {
     Restaurant.findAll({ raw: true, nest: true, include: [Category] }).then(restaurants => {
@@ -26,7 +27,38 @@ const adminService = {
         restaurant.destroy()
       })
       .then(() => callback({ status: 'success', message: '' }))
-  }
+  },
+  postRestaurant: (req, res, callback) => {
+    const { name, tel, address, opening_hours, description, CategoryId } = req.body
+    const { file } = req
+
+    if (!req.body.name) {
+      callback({ status: 'error', message: "name didn't exist" })
+    }
+
+    if (file) {
+      // 本地將圖片儲存至 upload 資料夾
+      // fs.readFile(file.path, (err, data) => {
+      //   if (err) console.log('Error: ', err)
+      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
+      //     return Restaurant.create({ name, tel, address, opening_hours, description, image: file ? `/upload/${file.originalname}` : null })
+      //       .then(() => callback({ status: 'success', message: "restaurant was successfully created")
+      //   })
+      // })
+      // 將圖片轉存至 imgur
+      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.upload(file.path, (err, img) => {
+        image = file ? img.data.link : null
+        return Restaurant.create({ name, tel, address, opening_hours, description, image, CategoryId })
+          .then(() => callback({ status: 'success', message: "restaurant was successfully created" })
+          )
+      })
+    } else {
+      image = 'https://i.imgur.com/HT8zCpm.png'
+      return Restaurant.create({ name, tel, address, opening_hours, description, CategoryId, image })
+        .then(() => callback({ status: 'success', message: "restaurant was successfully created" }))
+    }
+  },
 }
 
 module.exports = adminService

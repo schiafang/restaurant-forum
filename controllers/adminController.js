@@ -32,6 +32,17 @@ const adminController = {
       }
     })
   },
+  putRestaurant: (req, res) => {
+    adminService.putRestaurant(req, res, data => {
+      if (data['status'] === 'error') {
+        req.flash('errorMsg', data['message'])
+        return res.redirect('back')
+      } else {
+        req.flash('successMsg', data['message'])
+        res.redirect('/admin/restaurants')
+      }
+    })
+  },
   //瀏覽新增頁面
   createRestaurant: (req, res) => {
     Category.findAll({ raw: true, nest: true })
@@ -49,42 +60,6 @@ const adminController = {
             return res.render('admin/create', { restaurant, categories })
           })
       })
-  },
-  //編輯資料庫餐廳資料
-  putRestaurant: (req, res) => {
-    const id = req.params.id
-    const { name, tel, address, opening_hours, description, CategoryId } = req.body
-    const { file } = req
-
-    if (!req.body.name) {
-      req.flash('errorMsg', "name didn't exist")
-      return res.redirect('back')
-    }
-
-    if (file) {
-      // fs.readFile(file.path, (err, data) => {
-      //   if (err) console.log('Error: ', err)
-      //   fs.writeFile(`upload/${file.originalname}`, data, () => {
-      //     return Restaurant.findByPk(id)
-      //       .then(restaurant => {
-      //         return restaurant.update({ name, tel, address, opening_hours, description, image: file ? img.data.link : null })
-      //       })
-      //       .then(() => res.redirect('/admin/restaurants'))
-      //   })
-      // })
-      imgur.setClientID(IMGUR_CLIENT_ID)
-      imgur.upload(file.path, (err, img) => {
-        image = file ? img.data.link : null
-        return Restaurant.findByPk(id)
-          .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description, CategoryId, image }))
-          .then(() => res.redirect('/admin/restaurants'))
-      })
-    } else {
-      return Restaurant.findByPk(id)
-        .then(restaurant => restaurant.update({ name, tel, address, opening_hours, description, CategoryId }))
-        .then(() => res.redirect('/admin/restaurants'))
-        .catch(error => console.log('error'))
-    }
   },
   //顯示使用者清單
   getUsers: (req, res) => {

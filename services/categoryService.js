@@ -12,7 +12,17 @@ const categoryService = {
         callback({ categories })
       }
     })
-  }
+  },
+  postCategory: (req, res, callback) => {
+    const name = req.body.name
+    if (!name) {
+      return callback({ status: 'error', message: "name didn't exist" })
+    }
+    Category.create({ name })
+      .then(() => {
+        return callback({ status: 'success', message: "success create category" })
+      })
+  },
 }
 
 module.exports = categoryService

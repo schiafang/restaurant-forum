@@ -8,9 +8,13 @@ const categoryController = {
     categoryService.getCategories(req, res, data => res.render('admin/categories', data))
   },
   postCategory: (req, res) => {
-    const name = req.body.name
-    if (!name) res.redirect('back')
-    else Category.create({ name }).then(() => res.redirect('/admin/categories'))
+    categoryService.postCategory(req, res, data => {
+      if (data['status'] === 'error') {
+        return res.redirect('back')
+      }
+      req.flash('successMsg', data['message'])
+      res.redirect('/admin/categories')
+    })
   },
   putCategory: (req, res) => {
     const id = req.params.id

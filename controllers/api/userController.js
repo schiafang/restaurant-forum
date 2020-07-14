@@ -27,6 +27,26 @@ const userController = {
         user: { id, name, email, isAdmin }
       })
     })
+  },
+  signUp: (req, res) => {
+    const { name, email, password, confirmPassword } = req.body
+    const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10))
+    const avtarDefault = ['https://i.imgur.com/cr7fyXC.png', 'https://i.imgur.com/0R9kFRX.png', 'https://i.imgur.com/P8VVdDm.png', 'https://i.imgur.com/U31wP5Z.png']
+    let random = Math.floor(Math.random() * 4) + 1
+
+    if (password !== confirmPassword) {
+      return res.json({ status: 'error', message: '兩次密碼輸入不同！' })
+    }
+
+    User.findOne({ where: { email } })
+      .then(user => {
+        const image = avtarDefault[random]
+        if (user) {
+          return res.json({ status: 'error', message: '信箱重複！' })
+        }
+        return User.create({ name, email, password: hashPassword, image })
+          .then(() => res.json({ status: 'success', message: '成功註冊帳號！' }))
+      })
   }
 }
 

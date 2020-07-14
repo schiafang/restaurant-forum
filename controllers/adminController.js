@@ -16,7 +16,11 @@ const adminController = {
   getRestaurant: (req, res) => {
     adminService.getRestaurant(req, res, data => res.render('admin/restaurant', data))
   },
-
+  deleteRestaurant: (req, res) => {
+    adminService.deleteRestaurant(req, res, data => {
+      res.redirect('/admin/restaurants')
+    })
+  },
   //瀏覽新增頁面
   createRestaurant: (req, res) => {
     Category.findAll({ raw: true, nest: true })
@@ -102,17 +106,6 @@ const adminController = {
         .then(() => res.redirect('/admin/restaurants'))
         .catch(error => console.log('error'))
     }
-  },
-  //刪除餐廳資料
-  deleteRestaurant: (req, res) => {
-    const id = req.params.id
-    return Restaurant.findByPk(id, { include: [Comment] })
-      .then(restaurant => {
-        if (restaurant.Comments.length !== 0) { restaurant.Comments[0].destroy() }
-        restaurant.destroy()
-      })
-      .then(() => res.redirect('/admin/restaurants'))
-      .catch(error => console.log('error'))
   },
   //顯示使用者清單
   getUsers: (req, res) => {

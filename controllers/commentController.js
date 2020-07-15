@@ -1,19 +1,14 @@
-const db = require('../models')
-const Comment = db.Comment
+const commentService = require('../services/commentService')
 
 module.exports = {
   postComment: (req, res) => {
-    const RestaurantId = req.body.restaurantId
-    const UserId = req.user.id
-    const text = req.body.text
-    return Comment.create({ text, RestaurantId, UserId })
-      .then(() => res.redirect(`/restaurants/${RestaurantId}`))
+    commentService.postComment(req, res, data => {
+      return res.redirect(`/restaurants/${data['RestaurantId']}`)
+    })
   },
   deleteComment: (req, res) => {
-    return Comment.findByPk(req.params.id)
-      .then(comment => {
-        comment.destroy()
-          .then(() => res.redirect(`/restaurants/${comment.RestaurantId}`))
-      })
+    commentService.deleteComment(req, res, data => {
+      return res.redirect(`/restaurants/${data['RestaurantId']}`)
+    })
   }
 }

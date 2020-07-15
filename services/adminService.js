@@ -5,7 +5,7 @@ const Category = db.Category
 const Comment = db.Comment
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
-
+// const fs = require('fs')
 
 const adminService = {
   getRestaurants: (req, res, callback) => {
@@ -92,6 +92,21 @@ const adminService = {
         .then(() => callback({ status: 'success', message: "restaurant was updated" }))
         .catch(error => console.log('error'))
     }
+  },
+  getUsers: (req, res, callback) => {
+    return User.findAll({ raw: true })
+      .then(users => {
+        return callback({ users })
+      })
+  },
+  putUser: (req, res, callback) => {
+    const id = req.params.id
+    return User.findByPk(id)
+      .then(user => {
+        if (user.isAdmin) { return user.update({ isAdmin: false }) }
+        return user.update({ isAdmin: true })
+      })
+      .then(() => callback({ status: 'success', message: '成功變更使用者身份' }))
   }
 }
 

@@ -3,6 +3,8 @@ const db = require('../../models')
 const User = db.User
 const jwt = require('jsonwebtoken')
 
+const userService = require('../../services/userService')
+
 const userController = {
   signIn: (req, res) => {
     const username = req.body.email
@@ -47,6 +49,33 @@ const userController = {
         return User.create({ name, email, password: hashPassword, image })
           .then(() => res.json({ status: 'success', message: '成功註冊帳號！' }))
       })
+  },
+  getUser: (req, res) => {
+    userService.getUser(req, res, data => res.json(data))
+  },
+  putUser: (req, res) => {
+    userService.putUser(req, res, data => res.json(data))
+  },
+  addFavorite: (req, res) => {
+    userService.addFavorite(req, res, data => res.json(data))
+  },
+  removeFavorite: (req, res) => {
+    userService.removeFavorite(req, res, data => res.json(data))
+  },
+  addLike: (req, res) => {
+    userService.addLike(req, res, data => res.json(data))
+  },
+  removeLike: (req, res) => {
+    userService.removeLike(req, res, data => res.json(data))
+  },
+  getTopUsers: (req, res) => {
+    userService.getTopUsers(req, res, data => res.json(data))
+  },
+  addFollowing: (req, res) => {
+    userService.addFollowing(req, res, data => res.json(data))
+  },
+  removeFollowing: (req, res) => {
+    userService.removeFollowing(req, res, data => res.json(data))
   }
 }
 
